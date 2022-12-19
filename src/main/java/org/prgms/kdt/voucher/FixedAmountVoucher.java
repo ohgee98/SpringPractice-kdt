@@ -1,8 +1,10 @@
-package org.prgms.kdt;
+package org.prgms.kdt.voucher;
+
+import org.prgms.kdt.voucher.Voucher;
 
 import java.util.UUID;
 
-public class FixedAmountVoucher implements Voucher{
+public class FixedAmountVoucher implements Voucher {
 
     private final UUID voucherId;
     private final long amount;
@@ -13,7 +15,7 @@ public class FixedAmountVoucher implements Voucher{
 
     @Override
     public UUID getVoucherId() {
-        return null;
+        return voucherId;
     }
 
     public long discount(long beforeDiscount){

@@ -1,41 +1,31 @@
 package org.prgms.kdt;
 
+import org.prgms.kdt.order.Order;
+import org.prgms.kdt.voucher.MemoryVoucherRepository;
+import org.prgms.kdt.voucher.Voucher;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.Optional;
-import java.util.UUID;
+import org.springframework.context.annotation.FilterType;
 
 @Configuration
+@ComponentScan(basePackages = {"org.prgms.kdt.order","org.prgms.kdt.voucher", "org.prgms.kdt.configuration"})
 public class AppConfiguration {
 
-    @Bean
-    public VoucherRepository voucherRepository(){
-        return new VoucherRepository() {
-            @Override
-            public Optional<Voucher> findById(UUID voucherId) {
-                return Optional.empty();
-            }
-        };
+    @Bean(initMethod = "init")
+    public BeanOne beanOne() {
+        return new BeanOne();
+    }
+}
+
+class BeanOne implements InitializingBean {
+    public void init(){
+        System.out.println("[BeanOne] init called!");
     }
 
-    @Bean
-    public OrderRepository orderRepository(){
-        return new OrderRepository() {
-            @Override
-            public void insert(Order order) {
-
-            }
-        };
-    }
-    @Bean
-    // 매개변수로 객체를 넣어주면 스프링이 알아서 찾아가지고 객체 생성해줌..?
-    public VoucherService voucherService(VoucherRepository voucherRepository){
-        return new VoucherService(voucherRepository);
-    }
-
-    @Bean
-    public OrderService orderService(VoucherService voucherService, OrderRepository orderRepository){
-        return new OrderService(voucherService, orderRepository);
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        System.out.println("[BeanOne] afterPropertiesSet called!");
     }
 }
