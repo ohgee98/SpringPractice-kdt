@@ -13,7 +13,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
 
 
-    public OrderService(VoucherService voucherService, OrderRepository orderRepository, VersionProvider versionProvider) {
+    public OrderService(VoucherService voucherService, OrderRepository orderRepository) {
         this.voucherService = voucherService;
         this.orderRepository = orderRepository;
     }

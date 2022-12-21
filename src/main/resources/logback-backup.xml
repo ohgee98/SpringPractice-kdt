@@ -1,0 +1,58 @@
+<configuration>
+
+<!--    color Converter 사용해서 conversion에 색 입히는 실습 -->
+    <conversionRule
+        conversionWord= "clr"
+        converterClass = "org.springframework.boot.logging.logback.ColorConverter" />
+
+    <property name="CONSOLE_LOG_PATTERN" value="%clr(%d{HH:mm:ss.SSS}){cyan} [%thread] %clr(%-5level) %logger{36} - %msg%n" />
+    <property name="FILE_LOG_PATTERN" value="%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n" />
+
+    <timestamp key="bySecond" datePattern="yyyyMMdd'T'HHmmss"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- encoders are assigned the type
+             ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+<!--  로그를 파일로 생성하는 실습 (보통은 rollingfileappender를 사용함) -->
+<!--    <appender name="FILE" class="ch.qos.logback.core.FileAppender">-->
+<!--        <file>logs/kdt_${bySecond}.log</file>-->
+<!--&lt;!&ndash;  더해지지 않고 매번 갱신 &ndash;&gt;-->
+<!--        <append>false</append>-->
+<!--        <encoder>-->
+<!--            <pattern>${LOG_PATTERN}</pattern>-->
+<!--        </encoder>-->
+<!--    </appender>-->
+
+
+    <appender name="ROLLING_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/access.log</file> <!-- 이걸 주면 현재 오늘의 로그가 되고 다음 파일들은 아래처럼 이름이 됨? -->
+<!-- 알아서 시간에 따라 만들어줌 -->
+<!-- 파일 넣는 여부에 따라 rolling 되는 방식 달라짐 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/access-%d{yyyy-MM-dd}.log</fileNamePattern>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="org.prgms.kdt" level="debug">
+        <appender-ref ref="ROLLING_FILE" />
+    </logger>
+
+    <!-- 중첩 시키지 않기 위해서는 additivity를 false를 주던가 appender-ref를 다르게 주던가 해야함 -->
+<!--    <logger name="org.prgms.kdt" level="info" additivity="false">-->
+<!--        <appender-ref ref="STDOUT" />-->
+<!--    </logger>-->
+
+    <root level="warn">
+        <appender-ref ref="STDOUT" />
+    </root>
+
+</configuration>

@@ -6,7 +6,10 @@ import org.prgms.kdt.order.OrderService;
 import org.prgms.kdt.voucher.FixedAmountVoucher;
 import org.prgms.kdt.voucher.JdbcVoucherRepository;
 import org.prgms.kdt.voucher.VoucherRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.BeanFactoryAnnotationUtils;
+import org.springframework.boot.ansi.AnsiOutput;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.util.Assert;
 
@@ -22,8 +25,10 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class OrderTester {
+    private static final Logger logger = LoggerFactory.getLogger(OrderTester.class);
     public static void main(String[] args) throws IOException {
 
+        AnsiOutput.setEnabled(AnsiOutput.Enabled.ALWAYS);
         var applicationContext = new AnnotationConfigApplicationContext(AppConfiguration.class);
 //        var applicationContext = new AnnotationConfigApplicationContext();
 //        applicationContext.register(AppConfiguration.class);
@@ -41,25 +46,27 @@ public class OrderTester {
 //        System.out.println(MessageFormat.format("minimumOrderAmount -> {0}", minimumOrderAmount));
 //        System.out.println(MessageFormat.format("description -> {0}", description));
 
+        // logger 실습
         var orderProperties = applicationContext.getBean(OrderProperties.class);
-//        System.out.println(MessageFormat.format("version -> {0}", orderProperties.getVersion()));
-//        System.out.println(MessageFormat.format("minimumOrderAmount -> {0}", orderProperties.getMinimumOrderAmount()));
-//        System.out.println(MessageFormat.format("supportVendors -> {0}", orderProperties.getSupportVendors()));
-//        System.out.println(MessageFormat.format("description -> {0}", orderProperties.getDescription()));
+        logger.error("logger name => {}", logger.getName());
+        logger.warn("version -> {}", orderProperties.getVersion());
+        logger.warn("minimumOrderAmount -> {}", orderProperties.getMinimumOrderAmount());
+        logger.warn("supportVendors -> {}", orderProperties.getSupportVendors());
+        logger.warn("description -> {}", orderProperties.getDescription());
 
         // Resource 실습
-        var resource = applicationContext.getResource("classpath:application.yaml"); // class Path 상에서 (구현체가 ClassPathResource)
-        var resource2 = applicationContext.getResource("file:test/sample.txt"); //경로 지정해서 가져오기 (구현체가 FileUrlResource)
-        var resource3 = applicationContext.getResource("https://stackoverflow.com/"); // 외부 사이트 가져오기 (file이 아님. UrlResource)
+//        var resource = applicationContext.getResource("classpath:application.yaml"); // class Path 상에서 (구현체가 ClassPathResource)
+//        var resource2 = applicationContext.getResource("file:test/sample.txt"); //경로 지정해서 가져오기 (구현체가 FileUrlResource)
+//        var resource3 = applicationContext.getResource("https://stackoverflow.com/"); // 외부 사이트 가져오기 (file이 아님. UrlResource)
 
-        System.out.println(MessageFormat.format("Resource ->{0}", resource3.getClass().getCanonicalName()));
+//        System.out.println(MessageFormat.format("Resource ->{0}", resource3.getClass().getCanonicalName()));
 //        var strings = Files.readAllLines(resource3.getFile().toPath()); // 개행이 될 때마다 각 원소가 되어 배열 형태로 저장
 //        System.out.println(strings.stream().reduce("", (a,b) -> a + "\n" + b)); // 개행 추가해서 쓴 내용 그대로 보기 위함
 
-        var readableByteChannel = Channels.newChannel(resource3.getURL().openStream()); // 외부 Url은 file이 아니기 때문에 Channel을 사용해서 확인할 수 있음
-        var bufferedReader = new BufferedReader(Channels.newReader(readableByteChannel, StandardCharsets.UTF_8));
-        var contents = bufferedReader.lines().collect(Collectors.joining("\n"));
-        System.out.println(contents);
+//        var readableByteChannel = Channels.newChannel(resource3.getURL().openStream()); // 외부 Url은 file이 아니기 때문에 Channel을 사용해서 확인할 수 있음
+//        var bufferedReader = new BufferedReader(Channels.newReader(readableByteChannel, StandardCharsets.UTF_8));
+//        var contents = bufferedReader.lines().collect(Collectors.joining("\n"));
+//        System.out.println(contents);
 
         var customerID = UUID.randomUUID();
 
