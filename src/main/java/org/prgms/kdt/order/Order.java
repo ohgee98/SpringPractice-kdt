@@ -41,4 +41,20 @@ public class Order { // entity 클래스
     public UUID getOrderId() {
         return orderId;
     }
+
+    public Optional<Voucher> getVoucher(){
+        return voucher;
+    }
+
+    public OrderStatus getOrderStatus(){
+        return orderStatus;
+    }
+
+    public List<OrderItem> getOrderItems(){
+        return orderItems;
+    }
+
+    public UUID getCustomerID(){
+        return customerID;
+    }
 }

@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 //@Primary
 @Repository
-@Profile({"local","default"})
+@Profile({"local","test"})
 //@Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON) // 스쿱 정의
 public class MemoryVoucherRepository implements VoucherRepository, InitializingBean, DisposableBean {
     // 메모리 관리하는 클래스
