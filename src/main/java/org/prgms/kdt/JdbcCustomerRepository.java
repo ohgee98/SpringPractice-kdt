@@ -158,16 +158,16 @@ public class JdbcCustomerRepository {
         logger.info("created customerId -> {}", customerId);
         logger.info("created UUID Version -> {}", customerId.version());
 
-        customerRepository.insertCustomer(customerId, "new-user", "new-user@gmail.com");
-        customerRepository.findAllIds().forEach(v -> logger.info("Found customerId : {} and version : {}", v, v.version()));
+//        customerRepository.insertCustomer(customerId, "new-user", "new-user@gmail.com");
+//        customerRepository.findAllIds().forEach(v -> logger.info("Found customerId : {} and version : {}", v, v.version()));
         // 만들 때 UUID 버전은 4이고 검색해서 가져올 때 UUID는 버전 3이라서 검색해서 가져올 때 둘의 id가 달라짐
 
-//        customerRepository.insertCustomer(UUID.randomUUID(), "new-user", "new-user@gmail.com");
-//        var customer2 = UUID.randomUUID();
-//        customerRepository.insertCustomer(customer2, "new-user2", "new-user2@gmail.com");
-//        customerRepository.findAllName().forEach(v -> logger.info("Found name : {}", v));
-//        customerRepository.updateCustomerName(customer2, "updated-user2");
-//        customerRepository.findAllName().forEach(v -> logger.info("Found name : {}", v));
+        customerRepository.insertCustomer(UUID.randomUUID(), "new-user", "new-user@gmail.com");
+        var customer2 = UUID.randomUUID();
+        customerRepository.insertCustomer(customer2, "new-user2", "new-user2@gmail.com");
+        customerRepository.findAllName().forEach(v -> logger.info("Found name : {}", v));
+        customerRepository.updateCustomerName(customer2, "updated-user");
+        customerRepository.findAllName().forEach(v -> logger.info("Found name : {}", v));
 
         // 이런 SQLInjection 공격을 막기 위해 prepare statement를 사용하는게 좋다
         // 넣었던게 문자열 조합을 한게 아니라 그냥 name 변수 자체에 들어가서 찾지 못하게 되는 것임
