@@ -1,11 +1,14 @@
 package org.prgms.kdt;
 
+import org.prgms.kdt.customer.Customer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,24 +24,19 @@ public class JdbcCustomerRepository {
 
 
     public List<String> findNames(String name) {
-        //       Java 10 부터 tryResource라는게 있어서 자동으로 close 할 수 있음 (더 간단)
-//        var SELECT_SQL = "select * from customers WHERE name = '"+name+"'";
         List<String> names = new ArrayList<>();
 
         try (
-                // Connection이 autoClose를 구현해서 {}block이 끝나면 알아서 닫아줌
                 var connection = DriverManager.getConnection("jdbc:mysql://localhost/order_mgmt", "root", "root1234!");
-//                var statement = connection.createStatement();
                 var statement = connection.prepareStatement(SELECT_BY_NAME_SQL);
-//                var resultSet = statement.executeQuery(SELECT_SQL);
         ) {
-            statement.setString(1, name); // 파라미터 세팅 : 파라미터 인자가 n개 일 수 있으니 순서를 명시 (1부터 시작)
+            statement.setString(1, name);
             logger.info("statement -> {}", statement);
             try (var resultSet = statement.executeQuery()) {
-                while (resultSet.next()) { // 결과값을 next로 넘기며 하나하나 살필 수 있음
+                while (resultSet.next()) {
                     var customerName = resultSet.getString("name");
                     var customerId = UUID.nameUUIDFromBytes(resultSet.getBytes("customer_id"));
-                    var createdAt = resultSet.getTimestamp("created_at").toLocalDateTime(); // date쪽은 not null이라 null이 들어오면 error 날 수 있으니 유의
+                    var createdAt = resultSet.getTimestamp("created_at").toLocalDateTime();
                     logger.info("customer id -> {}, name -> {}, createdAt -> {}", customerId, customerName, createdAt);
                     names.add(customerName);
                 }
@@ -54,7 +52,6 @@ public class JdbcCustomerRepository {
         List<String> names = new ArrayList<>();
 
         try (
-                // Connection이 autoClose를 구현해서 {}block이 끝나면 알아서 닫아줌
                 var connection = DriverManager.getConnection("jdbc:mysql://localhost/order_mgmt", "root", "root1234!");
                 var statement = connection.prepareStatement(SELECT_ALL_SQL);
                 var resultSet = statement.executeQuery();
@@ -62,8 +59,7 @@ public class JdbcCustomerRepository {
             while (resultSet.next()) { // 결과값을 next로 넘기며 하나하나 살필 수 있음
                 var customerName = resultSet.getString("name");
                 var customerId = UUID.nameUUIDFromBytes(resultSet.getBytes("customer_id"));
-                var createdAt = resultSet.getTimestamp("created_at").toLocalDateTime(); // date쪽은 not null이라 null이 들어오면 error 날 수 있으니 유의
-//                    logger.info("customer id -> {}, name -> {}, createdAt -> {}", customerId, customerName, createdAt);
+                var createdAt = resultSet.getTimestamp("created_at").toLocalDateTime();
                 names.add(customerName);
             }
         } catch (SQLException throwables) {
@@ -143,35 +139,68 @@ public class JdbcCustomerRepository {
         return 0;
     }
 
-    static UUID toUUID(byte[] bytes){ // 버전 4를 맞추기 위해서 유틸성을 밖으로 빼 생성하기
+    static UUID toUUID(byte[] bytes){
         var byteBuffer = ByteBuffer.wrap(bytes);
         return new UUID(byteBuffer.getLong(), byteBuffer.getLong());
     }
+
+    public void transactionTest(Customer customer){ // name과 email을 변경하는 트랜잭션
+        String updateNameSql = "UPDATE customers SET name = ? WHERE customer_id = UUID_TO_BIN(?)";
+        String updateEmailSql = "UPDATE customers SET email = ? WHERE customer_id = UUID_TO_BIN(?)";
+        Connection connection = null;
+        try{
+            connection = DriverManager.getConnection("jdbc:mysql://localhost/order_mgmt", "root", "root1234!");
+            connection.setAutoCommit(false); // 기본적으로 하면 바로 commit 되버려서 false를 시킴
+            try (
+                    var updateNameStatement = connection.prepareStatement(updateNameSql);
+                    var updateEmailStatement = connection.prepareStatement(updateEmailSql);
+            ) {
+                updateNameStatement.setString(1, customer.getName());
+                updateNameStatement.setBytes(2,customer.getCustomer_id().toString().getBytes());
+                updateNameStatement.executeUpdate();
+
+                updateEmailStatement.setString(1, customer.getEmail());
+                updateEmailStatement.setBytes(2,customer.getCustomer_id().toString().getBytes());
+                updateEmailStatement.executeUpdate();
+                connection.setAutoCommit(true); // 문제가 없으면 commit하도록 함
+            }
+        }catch (SQLException exception){
+            if(connection!=null){
+                try {
+                    connection.rollback();
+                    connection.close();
+                } catch (SQLException throwables) {
+                    logger.error("Got error while closing connection", throwables);
+                    throw new RuntimeException(exception);
+                }
+            }
+            logger.error("Got error while closing connection", exception);
+            throw new RuntimeException(exception);
+        }
+
+    }
+
     public static void main(String[] args) throws SQLException {
 
         var customerRepository = new JdbcCustomerRepository();
 
-        var count = customerRepository.deleteAllCustomers(); // 삭제
-        logger.info("deleted count -> {}", count);
+        customerRepository.transactionTest(new Customer(UUID.fromString("e478f7ea-27bf-4887-ac38-80e4cbddbb3e"),"newnew-user","new-user2@gmail.com", LocalDateTime.now()));
 
-        var customerId = UUID.randomUUID();
-        logger.info("created customerId -> {}", customerId);
-        logger.info("created UUID Version -> {}", customerId.version());
+//        var count = customerRepository.deleteAllCustomers();
+//        logger.info("deleted count -> {}", count);
+//
+//        var customerId = UUID.randomUUID();
+//        logger.info("created customerId -> {}", customerId);
+//        logger.info("created UUID Version -> {}", customerId.version());
+//
+//
+//        customerRepository.insertCustomer(UUID.randomUUID(), "new-user", "new-user@gmail.com");
+//        var customer2 = UUID.randomUUID();
+//        customerRepository.insertCustomer(customer2, "new-user2", "new-user2@gmail.com");
+//        customerRepository.findAllName().forEach(v -> logger.info("Found name : {}", v));
+//        customerRepository.updateCustomerName(customer2, "updated-user");
+//        customerRepository.findAllName().forEach(v -> logger.info("Found name : {}", v));
 
-//        customerRepository.insertCustomer(customerId, "new-user", "new-user@gmail.com");
-//        customerRepository.findAllIds().forEach(v -> logger.info("Found customerId : {} and version : {}", v, v.version()));
-        // 만들 때 UUID 버전은 4이고 검색해서 가져올 때 UUID는 버전 3이라서 검색해서 가져올 때 둘의 id가 달라짐
-
-        customerRepository.insertCustomer(UUID.randomUUID(), "new-user", "new-user@gmail.com");
-        var customer2 = UUID.randomUUID();
-        customerRepository.insertCustomer(customer2, "new-user2", "new-user2@gmail.com");
-        customerRepository.findAllName().forEach(v -> logger.info("Found name : {}", v));
-        customerRepository.updateCustomerName(customer2, "updated-user");
-        customerRepository.findAllName().forEach(v -> logger.info("Found name : {}", v));
-
-        // 이런 SQLInjection 공격을 막기 위해 prepare statement를 사용하는게 좋다
-        // 넣었던게 문자열 조합을 한게 아니라 그냥 name 변수 자체에 들어가서 찾지 못하게 되는 것임
-        // creatStatment를 사용 했을 때는 들어간 문자열이 쿼리문으로 동작했었음
 
 
     }
