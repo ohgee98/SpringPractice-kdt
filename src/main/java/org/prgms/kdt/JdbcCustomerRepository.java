@@ -183,25 +183,7 @@ public class JdbcCustomerRepository {
     public static void main(String[] args) throws SQLException {
 
         var customerRepository = new JdbcCustomerRepository();
-
         customerRepository.transactionTest(new Customer(UUID.fromString("e478f7ea-27bf-4887-ac38-80e4cbddbb3e"),"newnew-user","new-user2@gmail.com", LocalDateTime.now()));
-
-//        var count = customerRepository.deleteAllCustomers();
-//        logger.info("deleted count -> {}", count);
-//
-//        var customerId = UUID.randomUUID();
-//        logger.info("created customerId -> {}", customerId);
-//        logger.info("created UUID Version -> {}", customerId.version());
-//
-//
-//        customerRepository.insertCustomer(UUID.randomUUID(), "new-user", "new-user@gmail.com");
-//        var customer2 = UUID.randomUUID();
-//        customerRepository.insertCustomer(customer2, "new-user2", "new-user2@gmail.com");
-//        customerRepository.findAllName().forEach(v -> logger.info("Found name : {}", v));
-//        customerRepository.updateCustomerName(customer2, "updated-user");
-//        customerRepository.findAllName().forEach(v -> logger.info("Found name : {}", v));
-
-
 
     }
 }
