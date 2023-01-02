@@ -1,5 +1,7 @@
 package org.prgms.kdt.order;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -14,13 +16,12 @@ import java.util.List;
 @ConfigurationProperties(prefix = "kdt")
 public class OrderProperties implements InitializingBean {
 
-//    @Value("${kdt.version:v0.0.0}")
+    private final static Logger logger = LoggerFactory.getLogger(OrderProperties.class);
+
     private String version;
 
-//    @Value("${kdt.minimum-order-amount}")
     private Integer minimumOrderAmount;
 
-//    @Value("${kdt.support-vendors}")
     private List<String> supportVendors;
     private String description;
 
@@ -61,9 +62,9 @@ public class OrderProperties implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        System.out.println(MessageFormat.format("[OrderProperties] version -> {0}", version));
-        System.out.println(MessageFormat.format("[OrderProperties] minimumOrderAmount -> {0}", minimumOrderAmount));
-        System.out.println(MessageFormat.format("[OrderProperties] supportVendors -> {0}", supportVendors));
-        System.out.println(MessageFormat.format("[OrderProperties] JavaHome -> {0}", JavaHome));
+        logger.debug("[OrderProperties] version -> {}", version);
+        logger.debug("[OrderProperties] minimumOrderAmount -> {}", minimumOrderAmount);
+        logger.debug("[OrderProperties] supportVendors -> {}", supportVendors);
+        logger.debug("[OrderProperties] JavaHome -> {}", JavaHome);
     }
 }

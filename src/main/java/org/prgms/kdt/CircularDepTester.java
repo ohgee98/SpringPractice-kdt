@@ -24,14 +24,14 @@ class B {
 
 //@Configuration
 class CircularConfig {
-    @Bean
-    public A a(B b) {
-        return new A(b);
-        }
-
-        @Bean B b(A a) {
-            return new B(a);
-        }
+//    @Bean
+//    public A a(B b) {
+//        return new A(b);
+//        }
+//
+//        @Bean B b(A a) {
+//            return new B(a);
+//        }
 }
 
 public class CircularDepTester {

@@ -1,5 +1,6 @@
 package org.prgms.kdt.voucher;
 
+import org.prgms.kdt.aop.TrackTime;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 //@Primary
 @Repository
-@Profile({"local","default"})
+@Profile({"local","test"})
 //@Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON) // 스쿱 정의
 public class MemoryVoucherRepository implements VoucherRepository, InitializingBean, DisposableBean {
     // 메모리 관리하는 클래스
@@ -29,6 +30,7 @@ public class MemoryVoucherRepository implements VoucherRepository, InitializingB
     }
 
     @Override
+    @TrackTime
     public Voucher insert(Voucher voucher) {
         storage.put(voucher.getVoucherId(),voucher);
         return voucher;
