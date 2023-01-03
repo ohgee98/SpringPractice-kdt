@@ -10,10 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.nio.ByteBuffer;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -43,7 +40,7 @@ public class CustomerJdbcRepository implements CustomerRepository {
     @Override
     public Customer insert(Customer customer) {
         var update = jdbcTemplate.update("INSERT INTO customers(customer_id, name, email, created_at) VALUES (UNHEX(REPLACE(?, '-', '')), ?, ?, ?)",
-                customer.getCustomer_id().toString().getBytes(),
+                customer.getCustomerId().toString().getBytes(),
                 customer.getName(),
                 customer.getEmail(),
                 Timestamp.valueOf(customer.getCreatedAt()));
@@ -59,8 +56,8 @@ public class CustomerJdbcRepository implements CustomerRepository {
         var update = jdbcTemplate.update("UPDATE customers SET name = ?, email = ?, last_login_at = ?  WHERE customer_id = UNHEX(REPLACE(?, '-', ''))",
                 customer.getName(),
                 customer.getEmail(),
-                customer.getLastLonginAt() != null ? Timestamp.valueOf(customer.getLastLonginAt()) : null,
-                customer.getCustomer_id().toString().getBytes());
+                customer.getLastLoginAt() != null ? Timestamp.valueOf(customer.getLastLoginAt()) : null,
+                customer.getCustomerId().toString().getBytes());
         if (update!=1){
             throw new RuntimeException("Nothing was updated");
         }

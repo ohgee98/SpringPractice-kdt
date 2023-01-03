@@ -3,7 +3,6 @@ package org.prgms.kdt.customer;
 import com.wix.mysql.EmbeddedMysql;
 import com.zaxxer.hikari.HikariDataSource;
 import org.junit.jupiter.api.*;
-import org.prgms.kdt.OrderTester;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,6 @@ import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -124,7 +122,7 @@ class CustomerNamedJdbcRepositoryTest {
             logger.error("God BadSQLGrammarException error code -> {}",e.getSQLException().getErrorCode(), e);
         }
 
-        var retrievedCustomer = customerJdbcRepository.findById(newCustomer.getCustomer_id());
+        var retrievedCustomer = customerJdbcRepository.findById(newCustomer.getCustomerId());
         assertThat(retrievedCustomer.isEmpty(), is(false));
         assertThat(retrievedCustomer.get(), samePropertyValuesAs(newCustomer));
 
@@ -171,7 +169,7 @@ class CustomerNamedJdbcRepositoryTest {
         assertThat(all, hasSize(1));
         assertThat(all, everyItem(samePropertyValuesAs(newCustomer)));
 
-        var retrievedCustomer = customerJdbcRepository.findById(newCustomer.getCustomer_id());
+        var retrievedCustomer = customerJdbcRepository.findById(newCustomer.getCustomerId());
         assertThat(retrievedCustomer.isEmpty(), is(false));
         assertThat(retrievedCustomer.get(), samePropertyValuesAs(newCustomer));
     }

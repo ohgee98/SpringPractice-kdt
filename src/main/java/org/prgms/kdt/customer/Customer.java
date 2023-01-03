@@ -6,15 +6,15 @@ import java.util.UUID;
 public class Customer {
 
     // 어떤 값이 바뀌고 바뀌지 않는지 유의해서 정하기 (바뀌지 않으면 final)
-    private final UUID customer_id;
+    private final UUID customerId;
     private String name;
     private final String email;
-    private LocalDateTime lastLonginAt;
+    private LocalDateTime lastLoginAt;
     private final LocalDateTime createdAt;
 
     public Customer(UUID customer_id, String name, String email, LocalDateTime createdAt) {
         validateName(name);
-        this.customer_id = customer_id;
+        this.customerId = customer_id;
         this.name = name;
         this.email = email;
         this.createdAt = createdAt;
@@ -22,10 +22,10 @@ public class Customer {
 
     public Customer(UUID customer_id, String name, String email, LocalDateTime lastLonginAt, LocalDateTime createdAt) {
         validateName(name);
-        this.customer_id = customer_id;
+        this.customerId = customer_id;
         this.name = name;
         this.email = email;
-        this.lastLonginAt = lastLonginAt;
+        this.lastLoginAt = lastLonginAt;
         this.createdAt = createdAt;
     }
 
@@ -43,11 +43,11 @@ public class Customer {
     }
 
     public void login(){
-        this.lastLonginAt = LocalDateTime.now();
+        this.lastLoginAt = LocalDateTime.now();
     }
 
-    public UUID getCustomer_id() {
-        return customer_id;
+    public UUID getCustomerId() {
+        return customerId;
     }
 
     public String getName() {
@@ -58,8 +58,8 @@ public class Customer {
         return email;
     }
 
-    public LocalDateTime getLastLonginAt() {
-        return lastLonginAt;
+    public LocalDateTime getLastLoginAt() {
+        return lastLoginAt;
     }
 
     public LocalDateTime getCreatedAt() {

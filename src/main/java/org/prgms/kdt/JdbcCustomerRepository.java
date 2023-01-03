@@ -8,7 +8,6 @@ import java.nio.ByteBuffer;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -156,11 +155,11 @@ public class JdbcCustomerRepository {
                     var updateEmailStatement = connection.prepareStatement(updateEmailSql);
             ) {
                 updateNameStatement.setString(1, customer.getName());
-                updateNameStatement.setBytes(2,customer.getCustomer_id().toString().getBytes());
+                updateNameStatement.setBytes(2,customer.getCustomerId().toString().getBytes());
                 updateNameStatement.executeUpdate();
 
                 updateEmailStatement.setString(1, customer.getEmail());
-                updateEmailStatement.setBytes(2,customer.getCustomer_id().toString().getBytes());
+                updateEmailStatement.setBytes(2,customer.getCustomerId().toString().getBytes());
                 updateEmailStatement.executeUpdate();
                 connection.setAutoCommit(true); // 문제가 없으면 commit하도록 함
             }
