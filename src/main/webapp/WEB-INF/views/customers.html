@@ -15,6 +15,9 @@
 <img th:src="@{/resources/39.png}" class="img-fluid">
 <!--치환 실패시 ---- 이 보이게 됨 -->
 <p th:text="'The time on the server is'+${serverTime}">----</p>
+<div class="d-grid gap-2 d-md-flex justify-content-md-end">
+    <a th:href="@{/customers/new}" class="btn btn-primary me-md-2" type="button">Create Customer</a>
+</div>
 
 <h2>Customer Table</h2>
 

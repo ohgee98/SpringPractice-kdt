@@ -3,7 +3,10 @@ package org.prgms.kdt.customer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -20,7 +23,18 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    public Customer createCustomer(String email, String name) {
+        var customer = new Customer(UUID.randomUUID(), name, email, LocalDateTime.now());
+        return customerRepository.insert(customer);
+    }
+
+    @Override
     public List<Customer> getAllCustomers() {
         return customerRepository.findAll();
+    }
+
+    @Override
+    public Optional<Customer> getCustomer(UUID customerId) {
+        return customerRepository.findById(customerId);
     }
 }
