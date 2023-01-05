@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>org.prgms</groupId>
-	<artifactId>ket-spring-order</artifactId>
+	<artifactId>kdt-spring-order</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>kdt</name>
 	<description>Demo project for Spring Boot</description>

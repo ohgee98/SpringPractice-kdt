@@ -1,28 +1,47 @@
 package org.prgms.kdt.customer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @Controller
+//@CrossOrigin(origins = "*") // 특정 컨트롤러에도 적용이 가능함
 public class CustomerController {
 
     private final CustomerService customerService;
+
+    private static final Logger logger = LoggerFactory.getLogger(CustomerController.class);
 
     public CustomerController(CustomerService customerService) {
         this.customerService = customerService;
     }
 
-    @GetMapping("/api/v1/customers") //api는 version을 꼭 명시해줘야함
-    @ResponseBody // 별다른 동작하지 않아도 JSON으로 응답이 옴
-    public List<Customer> findCustomers(Model model){
+    @GetMapping("/api/v1/customers")
+    @ResponseBody
+    public List<Customer> findCustomers(){
         return customerService.getAllCustomers();
+    }
+
+    @GetMapping("/api/v1/customers/{customerId}")
+    @ResponseBody
+    @CrossOrigin(origins = "*") // 특정 메소드에 대해서도 CORS 설정 가능
+    public ResponseEntity<Customer> findCustomer(@PathVariable("customerId") UUID customerId){
+        var customer = customerService.getCustomer(customerId);
+        return customer.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/api/v1/customers/{customerId}")
+    @ResponseBody
+    public CustomerDto saveCustomer(@PathVariable("customerId") UUID customerId, @RequestBody CustomerDto customer){
+        logger.info("Got customer save request {}", customer);
+        return customer;
     }
 
     @GetMapping("/customers")
@@ -43,6 +62,7 @@ public class CustomerController {
             return "views/404";
         }
     }
+
 
     @GetMapping("/customers/new")
     public String viewNewCustomerPage(){

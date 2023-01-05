@@ -28,10 +28,7 @@ import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.resource.EncodedResourceResolver;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
@@ -112,15 +109,12 @@ public class KdtWebApplicationInitializer implements WebApplicationInitializer {
             // SpringBoot에서 하면 손쉽게 가능함
         }
 
-//        @Override
-//        public void configureMessageConverters(List<HttpMessageConverter<?>> converters) { // 메시지 컨버터 형태를 JSON이 아닌 XML로 convert할 수 있음 (이러면 기존 모든 컨버터를 override 해버림)
-//            var messageConverter = new MarshallingHttpMessageConverter();
-//            var xStreamMarshaller = new XStreamMarshaller();
-//            messageConverter.setMarshaller(xStreamMarshaller);
-//            messageConverter.setUnmarshaller(xStreamMarshaller);
-//
-//            converters.add(messageConverter);
-//        }
+        @Override
+        public void addCorsMappings(CorsRegistry registry) {
+            registry.addMapping("/api/**")
+                    .allowedMethods("GET","POST") // 메소드 단위로 허용하려는 경우
+                    .allowedOrigins("*"); //전체 다 허용
+        }
     }
 
 
@@ -176,12 +170,6 @@ public class KdtWebApplicationInitializer implements WebApplicationInitializer {
         servletRegistration.addMapping("/");
         servletRegistration.setLoadOnStartup(1); // default값이 -1로 정의
 
-        /*
-        * -1로 주고 실행하면 root밖에 없음
-        * 0이나 1로 주고 실행하면 root applicationContext가 생성 된 뒤, 우리가 만들어둔 Servlet도 생성이 됨
-        * LoadOnStartup은 -1로 설정해야지 처음엔 load가 안되다가 api 요청이 왔을 때 servlet이 load가 됨
-        * logback.xml 설정을 debug로 해야 context log 확인이 가능
-        * */
     }
 
 
