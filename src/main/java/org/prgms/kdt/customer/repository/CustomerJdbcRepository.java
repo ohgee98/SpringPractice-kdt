@@ -1,6 +1,8 @@
-package org.prgms.kdt.customer;
+package org.prgms.kdt.customer.repository;
 
 import org.prgms.kdt.JdbcCustomerRepository;
+import org.prgms.kdt.customer.model.Customer;
+import org.prgms.kdt.customer.repository.CustomerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -21,7 +23,7 @@ public class CustomerJdbcRepository implements CustomerRepository {
     private static final Logger logger = LoggerFactory.getLogger(JdbcCustomerRepository.class);
     private final DataSource dataSource;
     private final JdbcTemplate jdbcTemplate;
-    private static RowMapper<Customer> customerRowMapper = (resultSet,i) ->{
+    private static RowMapper<Customer> customerRowMapper = (resultSet, i) ->{
         var customerId = toUUID(resultSet.getBytes("customer_id"));
         var customerName = resultSet.getString("name");
         var customerEmail = resultSet.getString("email");
