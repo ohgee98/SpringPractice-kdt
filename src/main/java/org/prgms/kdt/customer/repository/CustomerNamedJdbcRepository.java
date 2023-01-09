@@ -1,30 +1,28 @@
-package org.prgms.kdt.customer;
+package org.prgms.kdt.customer.repository;
 
 import org.prgms.kdt.JdbcCustomerRepository;
+import org.prgms.kdt.customer.model.Customer;
+import org.prgms.kdt.customer.repository.CustomerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.DataAccessException;
+import org.springframework.context.annotation.Primary;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
 import java.nio.ByteBuffer;
 import java.sql.Timestamp;
 import java.util.*;
 
 @Repository
+@Primary
 public class CustomerNamedJdbcRepository implements CustomerRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(JdbcCustomerRepository.class);
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    private static RowMapper<Customer> customerRowMapper = (resultSet,i) ->{
+    private static RowMapper<Customer> customerRowMapper = (resultSet, i) ->{
         var customerId = toUUID(resultSet.getBytes("customer_id"));
         var customerName = resultSet.getString("name");
         var customerEmail = resultSet.getString("email");
@@ -41,11 +39,11 @@ public class CustomerNamedJdbcRepository implements CustomerRepository {
 
     private Map<String ,Object> toParamMAp(Customer customer) {
         return new HashMap<String, Object>() {{
-            put("customerId", customer.getCustomer_id().toString().getBytes());
+            put("customerId", customer.getCustomerId().toString().getBytes());
             put("name", customer.getName());
             put("email", customer.getEmail());
             put("createdAt", Timestamp.valueOf(customer.getCreatedAt()));
-            put("lastLoginAt", customer.getLastLonginAt() != null ? Timestamp.valueOf(customer.getLastLonginAt()) : null);
+            put("lastLoginAt", customer.getLastLoginAt() != null ? Timestamp.valueOf(customer.getLastLoginAt()) : null);
         }};
     }
 
